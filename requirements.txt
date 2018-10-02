@@ -1,0 +1,6 @@
+discord.py==git+https://github.com/Rapptz/discord.py@rewrite
+Flask==1.0.2
+Flask-Admin==1.5.2
+Flask-BasicAuth==0.2.0
+Flask-SQLAlchemy==2.3.2
+python-dotenv==0.9.1
