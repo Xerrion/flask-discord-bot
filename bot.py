@@ -1,20 +1,23 @@
-import discord
 import os
-import app
 
-bot = discord.Client()
+import discord
+from discord.ext.commands import Bot
+
+bot = Bot(command_prefix=os.environ.get('COMMAND_PREFIX'))
+
+client = discord.Client()
 
 
 def run():
-    """Run the bot"""
-    bot.run(os.environ.get('BOT_SECRET'))
+    client.run(os.environ.get('BOT_TOKEN'))
 
 
-@bot.event
+@client.event
 async def on_ready():
-    return print('I am {}'.format(bot.user.name))
+    return print("{} ".format(client.user.name))
 
 
-@bot.event
-async def on_message(ctx):
-    await ctx.content.message
+for file in os.listdir("cogs"):
+    if file.endswith(".py"):
+        name = file[:-3]
+        bot.load_extension(f"cogs.{name}")
