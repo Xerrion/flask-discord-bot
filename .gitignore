@@ -1,16 +1,20 @@
+# Workspace Specific
 /.idea
 /.env
 venv/
 
+# Python Specific
 *.pyc
 __pycache__/
-
 instance/
-
 .pytest_cache/
 .coverage
 htmlcov/
+*.egg-info/
 
+# Build paths
 dist/
 build/
-*.egg-info/
+
+# Database
+/app.db
