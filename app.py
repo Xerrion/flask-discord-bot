@@ -43,7 +43,7 @@ class User(db.Model):
         return self.name
 
     def __repr__(self):
-        return '<User {}>'.format(self.name)
+        return f'<User {self.name}>'
 
 
 class Answers(db.Model):
