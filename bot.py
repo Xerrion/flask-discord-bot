@@ -1,23 +1,21 @@
 import os
+import random
 
 import discord
 from discord.ext.commands import Bot
 
-bot = Bot(command_prefix=os.environ.get('COMMAND_PREFIX'))
-
-client = discord.Client()
+bot = Bot(command_prefix=os.environ.get("COMMAND_PREFIX"))
 
 
 def run():
-    client.run(os.environ.get('BOT_TOKEN'))
+    bot.run(os.environ.get('BOT_TOKEN'))
 
 
-@client.event
+@bot.event
 async def on_ready():
-    return print("{} ".format(client.user.name))
+    print(f"I am {bot.user.name}")
 
-
-for file in os.listdir("cogs"):
-    if file.endswith(".py"):
-        name = file[:-3]
-        bot.load_extension(f"cogs.{name}")
+    for file in os.listdir("cogs"):
+        if file.endswith(".py"):
+            name = file[:-3]
+            bot.load_extension(f"cogs.{name}")
