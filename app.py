@@ -21,6 +21,7 @@ t.start()
 # Create our app
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Let's create a database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
