@@ -8,3 +8,4 @@ timeago
 psutil
 requests
 sentry_sdk
+cassiopeia
