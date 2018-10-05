@@ -46,8 +46,9 @@ class LolCommands:
             for d in data['services']:
                 embed.add_field(name=str(f'{d["name"]}'), value=f'{d["status"].capitalize()}', inline=True)
             await ctx.send(embed=embed)
-        else:
-            await ctx.send('There was an error contacting Riot Developer API')
+        elif self.response.status_code != 200:
+            print(f'It\'s properly the API Token - Status code: {self.response.status_code}')
+        await ctx.send('There was an error contacting Riot Developer API')
 
 
 def setup(bot):
