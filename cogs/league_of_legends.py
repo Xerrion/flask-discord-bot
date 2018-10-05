@@ -3,6 +3,7 @@ import os
 import discord
 import requests
 from discord.ext import commands
+import cassiopeia as lol
 
 
 class LolCommands:
@@ -20,6 +21,7 @@ class LolCommands:
         'la2': {'domain': 'la2'},
     }
     response = None
+    lol.set_riot_api_key(os.environ.get('LOL_API_KEY'))
 
     def __init__(self, bot):
         self.bot = bot
@@ -45,10 +47,37 @@ class LolCommands:
             embed.set_thumbnail(url=ctx.bot.user.avatar_url)
             for d in data['services']:
                 embed.add_field(name=str(f'{d["name"]}'), value=f'{d["status"].capitalize()}', inline=True)
-            await ctx.send(embed=embed)
+            return await ctx.send(embed=embed)
         elif self.response.status_code != 200:
-            print(f'It\'s properly the API Token - Status code: {self.response.status_code}')
-        await ctx.send('There was an error contacting Riot Developer API')
+            return print(f'It\'s properly the API Token - Status code: {self.response.status_code}')
+        else:
+            return await ctx.send('There was an error contacting Riot Developer API')
+
+
+@commands.command(name='summoner')
+async def get_summoner(self, ctx, server=None, summoner=None):
+    for s, d in self.servers.items():
+        if not server:
+            await ctx.send('You need to specify a server. eg. !lolstatus na')
+        if not summoner:
+            await ctx.send('You need to specify a summoner')
+        if s == server:
+            self.response = requests.get(
+                f"https://{d['domain']}.api.riotgames.com/lol/status/v3/shard-data?api_key={os.environ.get('LOL_API_KEY')}")
+            break
+        else:
+            pass
+    if self.response.status_code == 200:
+        data = self.response.json()
+        embed = discord.Embed(title=str(f'{data["name"]}'))
+        embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+        for d in data['services']:
+            embed.add_field(name=str(f'{d["name"]}'), value=f'{d["status"].capitalize()}', inline=True)
+        return await ctx.send(embed=embed)
+    elif self.response.status_code != 200:
+        return print(f'It\'s properly the API Token - Status code: {self.response.status_code}')
+    else:
+        return await ctx.send('There was an error contacting Riot Developer API')
 
 
 def setup(bot):
