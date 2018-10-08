@@ -1,9 +1,8 @@
 import os
 import cassiopeia as lol
 
-lol.set_riot_api_key(os.environ.get('LOL_API_KEY'))
-lol.set_default_region('EUNE')
+lol.set_riot_api_key(os.environ.get('RIOT_API_KEY'))
 
-summoner = lol.get_summoner(name='Xerrion')
+summoner = lol.get_summoner(name='Xerrion', region='EUNE')
 
-print("{name} is a level summoner on the {region} server.".format(name=summoner.name, region=summoner.region))
+print(f'{summoner.match_history_uri}')
