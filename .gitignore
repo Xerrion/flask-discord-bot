@@ -20,3 +20,4 @@ build/
 /app.db
 /discord.db
 /settings.py
+/discord.sqlite3
