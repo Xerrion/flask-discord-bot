@@ -1,15 +1,16 @@
-import os
+import datetime
 
-import discord
-import requests
-from cassiopeia import Summoner
 from discord import Embed
 from discord.ext import commands
-import cassiopeia as lol
+from requests import HTTPError
+from riotwatcher import RiotWatcher
+from pprint import pprint
+
+import settings
 
 
 class LolCommands:
-    servers = {
+    regions = {
         'ru': {'domain': 'ru'},
         'kr': {'domain': 'kr'},
         'br': {'domain': 'br1'},
@@ -22,8 +23,8 @@ class LolCommands:
         'la1': {'domain': 'la1'},
         'la2': {'domain': 'la2'},
     }
-    response = None
-    lol.set_riot_api_key(os.environ.get('RIOT_API_KEY'))
+    watcher = RiotWatcher(settings.RIOT_API_KEY)
+    domain = None
 
     def __init__(self, bot):
         self.bot = bot
@@ -33,44 +34,36 @@ class LolCommands:
                       brief="Displays server status from Riots servers",
                       aliases=['lol_status', 'lolonline', 'islolup', 'lolstat'],
                       pass_context=True)
-    async def server_status(self, ctx, server=None):
-        for s, d in self.servers.items():
-            if not server:
-                return await ctx.send('You need to specify a server. eg. !lolstatus na')
-            if s == server:
-                self.response = requests.get(
-                    f"https://{d['domain']}.api.riotgames.com/lol/status/v3/shard-data?api_key={os.environ.get('RIOT_API_KEY')}")
-                break
+    async def server_status(self, ctx, region=None):
+        try:
+            if region is None:
+                return await ctx.send('Region is missing. E.g !lolstatus NA')
+            else:
+                for self.region, domain in self.regions.items():
+                    if region == self.region:
+                        self.domain = domain['domain']
+                        break
+                    else:
+                        self.domain = None
+                if self.domain:
+                    shard = self.watcher.lol_status.shard_data(self.domain)
+                    pprint(shard)
+                    embed = Embed(title=shard['name'], timestamp=datetime.datetime.now())
+                    embed.set_image(url=ctx.bot.user.avatar_url)
+                    for service in shard['services']:
+                        embed.add_field(name=service['name'].upper(), value=service['status'].capitalize(), inline=True)
+                    # embed.add_field(name=)
+                    embed.set_footer(text='Generated')
+                    await ctx.send(embed=embed)
+                else:
+                    await ctx.send('Region Not Found')
+        except HTTPError as error:
+            if error.response.status_code == 401:
+                pass
+            if error.response.status_code == 404:
+                await ctx.send('not found')
             else:
                 pass
-        if self.response.status_code == 200:
-            data = self.response.json()
-            embed = Embed(title=str(f'{data["name"]}'))
-            embed.set_thumbnail(url=ctx.bot.user.avatar_url)
-            for d in data['services']:
-                embed.add_field(name=str(f'{d["name"]}'), value=f'{d["status"].capitalize()}', inline=True)
-            return await ctx.send(embed=embed)
-        elif self.response.status_code != 200:
-            return print(f'It\'s properly the API Token - Status code: {self.response.status_code}')
-        else:
-            return await ctx.send('There was an error contacting Riot Developer API')
-
-    @commands.command(name='summoner',
-                      description='Get stats of a summoner',
-                      brief='Get status of a summoner',
-                      aliases=['summ', 'sum', 'lolsummoner'],
-                      pass_context=True)
-    async def get_summoner(self, ctx, server=None, summoner=None):
-        if server is not None or summoner is not None:
-            summoner = Summoner(name=summoner, region=server)
-            league = Leagues
-            embed = Embed(title=summoner.name)
-            embed.add_field(name='Flex Rank', value=league.League('tier'))
-            await ctx.send(embed=embed)
-        elif server is None:
-            await ctx.send('You must specify a region. E.g. !summoner EUNE Xerrion')
-        elif summoner is None:
-            await ctx.send('You must specify a summoner. E.g. !summoner EUNE Xerrion')
 
 
 def setup(bot):

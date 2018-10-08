@@ -1,7 +1,5 @@
 import os
-import random
 
-import discord
 from discord.ext.commands import Bot
 
 import settings
