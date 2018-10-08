@@ -1,18 +1,12 @@
-import os
 from threading import Thread
 
 from flask import Flask
-import sentry_sdk
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_sqlalchemy import SQLAlchemy
-from sentry_sdk.integrations.flask import FlaskIntegration
-import bot
 
-sentry_sdk.init(
-    dsn=os.environ.get('SENTRY_SECRET_URL'),
-    integrations=[FlaskIntegration()]
-)
+import bot
+import settings
 
 # Make a thread for our bot to run on.
 t = Thread(target=bot.run)
