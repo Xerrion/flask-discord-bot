@@ -7,6 +7,7 @@ from riotwatcher import RiotWatcher
 from pprint import pprint
 
 import settings
+from utils.regions import get_region
 
 
 class LolCommands:
@@ -36,27 +37,16 @@ class LolCommands:
                       pass_context=True)
     async def server_status(self, ctx, region=None):
         try:
-            if region is None:
-                return await ctx.send('Region is missing. E.g !lolstatus NA')
+            if get_region(region):
+                shard = self.watcher.lol_status.shard_data(get_region(region))
+                embed = Embed(title=shard['name'], timestamp=datetime.datetime.now())
+                embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+                for service in shard['services']:
+                    embed.add_field(name=service['name'].upper(), value=service['status'].capitalize(), inline=True)
+                embed.set_footer(text='Generated')
+                await ctx.send(embed=embed)
             else:
-                for self.region, domain in self.regions.items():
-                    if region == self.region:
-                        self.domain = domain['domain']
-                        break
-                    else:
-                        self.domain = None
-                if self.domain:
-                    shard = self.watcher.lol_status.shard_data(self.domain)
-                    pprint(shard)
-                    embed = Embed(title=shard['name'], timestamp=datetime.datetime.now())
-                    embed.set_thumbnail(url=ctx.bot.user.avatar_url)
-                    for service in shard['services']:
-                        embed.add_field(name=service['name'].upper(), value=service['status'].capitalize(), inline=True)
-                    # embed.add_field(name=)
-                    embed.set_footer(text='Generated')
-                    await ctx.send(embed=embed)
-                else:
-                    await ctx.send('Region Not Found')
+                await ctx.send('Region Not Found')
         except HTTPError as error:
             if error.response.status_code == 401:
                 pass
