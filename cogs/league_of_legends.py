@@ -49,7 +49,7 @@ class LolCommands:
                     shard = self.watcher.lol_status.shard_data(self.domain)
                     pprint(shard)
                     embed = Embed(title=shard['name'], timestamp=datetime.datetime.now())
-                    embed.set_image(url=ctx.bot.user.avatar_url)
+                    embed.set_thumbnail(url=ctx.bot.user.avatar_url)
                     for service in shard['services']:
                         embed.add_field(name=service['name'].upper(), value=service['status'].capitalize(), inline=True)
                     # embed.add_field(name=)
