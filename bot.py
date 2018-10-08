@@ -4,11 +4,13 @@ import random
 import discord
 from discord.ext.commands import Bot
 
-bot = Bot(command_prefix=os.environ.get("COMMAND_PREFIX"))
+import settings
+
+bot = Bot(command_prefix=settings.COMMAND_PREFIX)
 
 
 def run():
-    bot.run(os.environ.get('BOT_TOKEN'))
+    bot.run(settings.BOT_TOKEN)
 
 
 @bot.event

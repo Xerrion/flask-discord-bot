@@ -3,9 +3,7 @@ Flask
 Flask-Admin
 Flask-BasicAuth
 Flask-SQLAlchemy
-python-dotenv
 timeago
 psutil
 requests
-sentry_sdk
-cassiopeia
+riotwatcher

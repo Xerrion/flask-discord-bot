@@ -19,3 +19,4 @@ build/
 # Database
 /app.db
 /discord.db
+/settings.py
