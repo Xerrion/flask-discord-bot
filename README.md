@@ -12,6 +12,8 @@ $ python app.py
 ```
 
 ## Changelog
+### v0.6.1
+* Added !lolstatus command
 ### v0.5.6
 * Added information cog
 * Fixed a bug which broke the bot when using !lolstatus
