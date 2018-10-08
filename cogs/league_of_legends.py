@@ -55,6 +55,18 @@ class LolCommands:
             else:
                 pass
 
+    @commands.command(name='summoner',
+                      brief='Get details about a summoner from a specific region. Usage: !summoner REGION SUMMONER')
+    async def summoner_info(self, ctx, region, summoner):
+        try:
+            if get_region(region):
+                summoner = self.watcher.summoner.by_name(region=get_region(region), summoner_name=summoner)
+                league = self.watcher.league.positions_by_summoner(get_region(region), summoner['id'])
+                pprint(league[0]['queueType'])
+        except HTTPError as error:
+            if error.response.status_code == 404:
+                ctx.send('Summoner not found')
+
 
 def setup(bot):
     bot.add_cog(LolCommands(bot))
