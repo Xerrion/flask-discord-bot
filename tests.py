@@ -4,25 +4,13 @@ from riotwatcher import RiotWatcher
 import settings
 from requests import HTTPError
 
+from utils.regions import get_region
+
 watcher = RiotWatcher(settings.RIOT_API_KEY)
 
+summoner = watcher.summoner.by_name(region=get_region('eune'), summoner_name='xerrion')
+league = watcher.league.positions_by_summoner(get_region('eune'), summoner['id'])
 
 
-my_region = 'eune'
-
-regions = {
-    'ru': {'domain': 'ru'},
-    'kr': {'domain': 'kr'},
-    'br': {'domain': 'br1'},
-    'oca': {'domain': 'oc1'},
-    'jp': {'domain': 'jp1'},
-    'na': {'domain': 'na1'},
-    'euw': {'domain': 'euw1'},
-    'eune': {'domain': 'eun1'},
-    'tr': {'domain': 'tr1'},
-    'la1': {'domain': 'la1'},
-    'la2': {'domain': 'la2'},
-}
-for region, domain in regions.items():
-    if my_region is region:
-        print('s')
+print(summoner)
+print(league[0])
