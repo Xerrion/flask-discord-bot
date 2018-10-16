@@ -19,5 +19,3 @@ def get_region(region=None):
     for r, d in regions.items():
         if r == region:
             return d['domain']
-
-print(get_region('euw'))

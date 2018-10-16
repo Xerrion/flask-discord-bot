@@ -55,6 +55,25 @@ class LolCommands:
             else:
                 pass
 
+    @commands.command(name='summoner',
+                      brief='Get details about a summoner from a specific region. Usage: !summoner REGION SUMMONER')
+    async def summoner_info(self, ctx, region, summoner):
+        try:
+            if get_region(region):
+                user = self.watcher.summoner.by_name(region=get_region(region), summoner_name=summoner)
+                league = self.watcher.league.positions_by_summoner(get_region(region), user['id'])
+                if league[0]['queueType'] == 'RANKED_SOLO_5x5':
+                    queue_type = 'Solo/Duo'
+                embed = Embed(title=f'{queue_type}')
+                embed.set_thumbnail(url=
+                                    'http://www.macupdate.com/images/icons256/47210.png')
+                embed.add_field(name='Test', value='Tester')
+                embed.set_footer(text='Generated')
+                await ctx.send(embed=embed)
+        except HTTPError as error:
+            if error.response.status_code == 404:
+                await ctx.send('Summoner not found')
+
 
 def setup(bot):
     bot.add_cog(LolCommands(bot))

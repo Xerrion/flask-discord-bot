@@ -38,7 +38,16 @@ class User(db.Model):
         return self.name
 
     def __repr__(self):
-        return f'<User {self.name}>'
+        return f'<User: {self.name}>'
+
+
+class BotCommand(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    command_send = db.Column(db.String(100))
+
+    def __str__(self):
+        return self.name
 
 
 class Answers(db.Model):
@@ -64,6 +73,4 @@ admin = Admin(app, name='flask-discord-bot', template_mode='bootstrap3')
 # Admin views
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Answers, db.session))
-
-if __name__ == '__main__':
-    app.run()
+admin.add_view(ModelView(BotCommand, db.session))
