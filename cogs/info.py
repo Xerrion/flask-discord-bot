@@ -17,12 +17,25 @@ class InformationCommands:
                       pass_context=True)
     async def bot_information(self, context):
         embed = Embed(title='Bot Information')
-        embed.add_field(name='CPU Usage', value=f'Currently using: {ps.cpu_percent()}%', inline=True)
+        embed.add_field(name='CPU Usage',
+                        value=f'Currently using: {ps.cpu_percent()}%',
+                        inline=True)
         embed.add_field(name='RAM Usage',
                         value=f'Available: {bytes2human(self.mem.available)}\n'
                               f'Used: {bytes2human(self.mem.used)} \/ {self.mem.percent}%\n'
                               f'Total: {bytes2human(self.mem.total)}',
                         inline=True)
+        for disk in ps.disk_partitions():
+            usage = ps.disk_usage(disk.mountpoint)
+            embed.add_field(name='Disk Volume', value=f'{disk.device}',
+                            inline=False)
+            embed.add_field(name='Disk Space Total',
+                            value=f'{bytes2human(usage.total)}', inline=True)
+            embed.add_field(name='Disk Space Free',
+                            value=f'{bytes2human(usage.free)}', inline=True)
+            embed.add_field(name='Disk Space Used',
+                            value=f'{bytes2human(usage.used)}', inline=True)
+
         # embed.add_field(name='3', value='3', inline=True)
         # embed.add_field(name='4', value='4', inline=True)
         # embed.add_field(name='5', value='5', inline=True)
